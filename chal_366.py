@@ -42,10 +42,11 @@ at
 
 preformationists is one of six words that begin a modified funnel of length 12. Find the other five words.
 
-
 """
+from collections import deque
 
 all_words = set()
+
 with open("./enable1.txt","r") as infile:
 	all_words = {line.strip().lower() for line in infile.readlines() }
 
@@ -58,8 +59,49 @@ def funnel2(word):
 			longest = max(longest, 1+funnel2(word[0:i]+word[i+1:]))
 		return longest
 
+def trim_set(word):
+	sub_words = set()
+	mask_set  = set()
+	q = deque()
+	q.append('1')
+	q.append('0')
+	while len(q) > 0:
+		x = q.popleft()
+		if len(x) == len(word):
+			mask_set.add(x)
+		else:
+			q.append(x+'1')
+			q.append(x+'0')
+	for mask in mask_set:
+		candidate = ''.join([word[idx] for idx, char in enumerate(mask) if char == '1'])
+		if candidate in all_words:
+			sub_words.add(candidate)
+	sub_words.remove(word)
+	return sub_words
+
+def funnel2_bonus(word):
+	if word not in all_words:
+		return 0
+	longest = 1
+	for sub_word in trim_set(word):
+		longest = max(longest, 1+funnel2_bonus(sub_word))
+	return longest
+
 print(funnel2("gnash"))
 print(funnel2("princesses"))
 print(funnel2("turntables"))
 print(funnel2("implosive"))
 print(funnel2("programmer"))
+
+for word in all_words:
+	if funnel2(word) == 10:
+		print(word)
+		break
+
+print(funnel2_bonus("preformationists"))
+
+search_set = { word for word in all_words if len(word) >= 13 }
+
+for word in search_set:
+	if funnel2_bonus(word) == 12:
+		print(word)
