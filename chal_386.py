@@ -76,6 +76,9 @@ How fast can you find the sum of the digits of p(666666).
 table = dict()
 seen  = set()
 
+table_max = 0
+second_seq_vect = []
+
 def third_seq():
 	e = 1
 	o = 3
@@ -108,7 +111,28 @@ def p(n):
 			seen.add(n)
 			table[n] = total
 			return total
-		total += sig[idx]*p(n-val)
+		total += sig[idx]*sol
+		idx += 1
+		idx = idx % len(sig)
+
+def p2(n):
+	global table_max
+	if n < 0:
+		return 0
+	if n == 0:
+		return 1
+	if n < table_max:
+		return table[n]
+	total = 0
+	sig = [1,1,-1,-1]
+	idx = 0
+	for val in second_seq_vect:
+		sol = p2(n-val)
+		if sol == 0:
+			table_max = n
+			table[n] = total
+			return total
+		total += sig[idx]*sol
 		idx += 1
 		idx = idx % len(sig)
 
@@ -121,7 +145,17 @@ print(p(5))
 print(p(6))
 print(p(7))
 print(p(66))
-sol = p(666)
+x = p(666)
 #print(len(str(sol)))
 #print(sum([ int(i) for i in str(sol) ]))
-print(sol)
+print(x)
+
+for i in second_seq():
+	second_seq_vect.append(i)
+	if len(second_seq_vect) > 666667:
+		break
+
+for i in range(666666+1):
+	p2(i)
+print(table[666666])
+
