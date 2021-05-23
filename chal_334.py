@@ -86,11 +86,8 @@ The bonus output will contain a secret message.
 from PIL import Image
 
 # contains (color, xpos, ypos)
-
 pixels = {(0,0,0)}
-
 rules   = dict()
-
 num_ittr = None
 
 with open('334_rules.txt','r') as infile:
@@ -116,22 +113,11 @@ for _ in range(num_ittr):
 	pixels = next_pixels
 
 #rebase to zero
-min_x = float('inf')
-min_y = float('inf')
-max_x = 0
-max_y = 0
-
-for pixel in pixels:
-	color, x, y = pixel
-	min_x = min(min_x,x)
-	min_y = min(min_y,y)
+min_x = min([ x for color,x,y in pixels ])
+min_y = min([ y for color,x,y in pixels ])
 pixels = { (color,x-min_x,y-min_y) for color,x,y in pixels }
-
-for pixel in pixels:
-	color, x, y = pixel
-	max_x = max(max_x,x)
-	max_y = max(max_y,y)
-
+max_x = max([ x for color,x,y in pixels ])
+max_y = max([ y for color,x,y in pixels ])
 
 picture = Image.new('L',(max_x+1,max_y+1),0)
 picture_data = picture.load()
@@ -150,4 +136,3 @@ for j in range(max_y):
 				print(color%10,end='')
 	print()
 """
-
