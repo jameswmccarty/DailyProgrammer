@@ -76,7 +76,7 @@ Challenge Output
 
 import math
 
-def xor_mult(a,b):
+def xor_mult_2(a,b):
 	c = 0
 	if b == 0:
 		return 0
@@ -84,6 +84,16 @@ def xor_mult(a,b):
 	for i in range(digits):
 		if (1<<i) & b != 0:
 			c ^= (a<<i)
+	return c
+
+def xor_mult(a,b):
+	c = 0
+	i = 0
+	while b != 0:
+		if 1 & b != 0:
+			c ^= (a<<i)
+		i += 1
+		b = b >> 1
 	return c
 
 chals = ['1 2',
