@@ -43,5 +43,21 @@ def abacaba(step=26):
 		yield string
 		i += 1
 
-for seq in abacaba():
-	print(seq)
+def abacaba_rec(ascii=0):
+	ascii += 97
+	if ascii == 97:
+		return chr(97)
+	else:
+		return abacaba_rec(ascii-98)+chr(ascii)+abacaba_rec(ascii-98)
+
+#for seq in abacaba():
+#	print(seq)
+
+print(abacaba_rec(0))
+print(abacaba_rec(1))
+print(abacaba_rec(2))
+print(abacaba_rec(3))
+print(abacaba_rec(4))
+print(abacaba_rec(5))
+print(abacaba_rec(26))
+
