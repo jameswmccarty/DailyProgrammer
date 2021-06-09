@@ -20,9 +20,8 @@ def change(n):
 	coins = [500,100,25,10,5,1]
 	used  = 0
 	for coin in coins:
-		if n >= coin:
-			used += n//coin
-			n -= coin*(n//coin)
+		used += n//coin
+		n    %= coin
 	return used
 
 print(change(0)) # => 0
