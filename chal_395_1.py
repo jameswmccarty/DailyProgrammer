@@ -38,9 +38,11 @@ With an unlimited number of phones (N = infinity), it takes a maximum of 27 tria
 
 """
 
+memo = dict()
+
 def phonedrop(n, height):
 
-	memo = dict()
+	global memo
 
 	# Maximum number of floors that can be tested
 	# given a number of trials (drops) and a number
@@ -75,3 +77,9 @@ print(phonedrop(4, 456)) # => 11
 print(phonedrop(2, 789)) # => 40
 print(phonedrop(3, 789)) # => 17
 print(phonedrop(4, 789)) # => 12
+
+# bonus
+trial = 1
+while phonedrop(trial,123456789) != 27:
+	trial += 1
+print(trial, phonedrop(trial,123456789))
