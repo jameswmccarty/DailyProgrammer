@@ -25,12 +25,14 @@ Try to complete the challenge without actually determining the numerical values 
 
 def numcompare(a,b):
 	lex = "MDCLXVI"
+	was_less = False
 	while len(a) > 0 and len(b) > 0:
 		if lex.index(a[0]) < lex.index(b[0]):
 			return False
+		was_less = False if a[0] == b[0] else True
 		a = a[1:]
 		b = b[1:]
-	if len(b) > 0:
+	if len(b) > 0 or (len(b) == 0 and was_less):
 		return True
 	return False
 
@@ -40,3 +42,5 @@ print(numcompare("II", "I")) #=> false
 print(numcompare("V", "IIII")) #=> false
 print(numcompare("MDCLXV", "MDCLXVI")) #=> true
 print(numcompare("MM", "MDCCCCLXXXXVIIII")) #=> false
+print(numcompare("V","I")) #=>false
+print(numcompare("I","V")) #=>true
