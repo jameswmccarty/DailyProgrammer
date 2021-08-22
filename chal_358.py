@@ -59,6 +59,29 @@ def decode(txt):
 		out += '?' if c not in digit_map else digit_map[c]
 	return out
 
+def encode(digits):
+
+	digit_map = { 	'0' : ' _ | ||_|',
+					'1' : '     |  |',
+					'2' : ' _  _||_ ',
+					'3' : ' _  _| _|',
+					'4' : '   |_|  |',
+					'5' : ' _ |_  _|',
+					'6' : ' _ |_ |_|',
+					'7' : ' _   |  |',
+					'8' : ' _ |_||_|',
+					'9' : ' _ |_| _|'}
+
+	if not set(digits).issubset(set("0123456789")):
+		raise Exception("Invalid chars to encode!")
+		exit()
+	
+	for span in range(3):
+		row = ''
+		for digit in digits:
+			row += digit_map[digit][span*3:span*3+3]
+		print(row)
+
 l1 = "    _  _     _  _  _  _  _ "
 l2 = "  | _| _||_||_ |_   ||_||_|"
 l3 = "  ||_  _|  | _||_|  ||_| _|"
@@ -82,4 +105,9 @@ l2 = "|_||_ |_|  || ||_ |_ |_| _|"
 l3 = " _| _|  |  ||_| _| _| _||_ "
 
 print(decode(l1+l2+l3))
+
+encode("123456789")
+encode("433805825")
+encode("526837608")
+encode("954105592")
 
