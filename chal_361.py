@@ -107,14 +107,8 @@ class LC4_Cipher:
 			col_idx = [ _*6+ctc for _ in range(6) ]
 			col_seg = ''.join(self.S[_] for _ in col_idx)
 			col_seg = col_seg[-1] + col_seg[0:5]
-			new_s = ''
-			for _ in range(36):
-				if _ in col_idx:
-					new_s += col_seg[0]
-					col_seg = col_seg[1:]
-				else:
-					new_s += self.S[_]
-			self.S = new_s
+
+			self.S = ''.join([ col_seg[col_idx.index(_)] if _ in col_idx else self.S[_] for _ in range(36) ])
 
 			x, y = self.vect(C[-1])
 			self.i = (self.S.index(marker)//6 + x) % 6
@@ -143,34 +137,37 @@ class LC4_Cipher:
 			col_idx = [ _*6+ctc for _ in range(6) ]
 			col_seg = ''.join(self.S[_] for _ in col_idx)
 			col_seg = col_seg[-1] + col_seg[0:5]
-			new_s = ''
-			for _ in range(36):
-				if _ in col_idx:
-					new_s += col_seg[0]
-					col_seg = col_seg[1:]
-				else:
-					new_s += self.S[_]
-			self.S = new_s
+			self.S = ''.join([ col_seg[col_idx.index(_)] if _ in col_idx else self.S[_] for _ in range(36) ])
 
 			x, y = self.vect(char)
 			self.i = (self.S.index(marker)//6 + x) % 6
 			self.j = (self.S.index(marker)%6  + y) % 6
 		return P
 
+if __name__ == "__main__":
 
-"""
-Key: xv7ydq#opaj_39rzut8b45wcsgehmiknf26l
-Nonce: solwbf
-Header: (none)
-Message: im_about_to_put_the_hammer_down
-Signature: #rubberduck
-"""
+	"""
+	Key: xv7ydq#opaj_39rzut8b45wcsgehmiknf26l
+	Nonce: solwbf
+	Header: (none)
+	Message: im_about_to_put_the_hammer_down
+	Signature: #rubberduck
+	"""
 
-encoder1 = LC4_Cipher("xv7ydq#opaj_39rzut8b45wcsgehmiknf26l", "solwbf")
+	encoder1 = LC4_Cipher("xv7ydq#opaj_39rzut8b45wcsgehmiknf26l", "solwbf")
 
-cipher_text = encoder1.encrypt("im_about_to_put_the_hammer_down#rubberduck")
-print(cipher_text)
+	cipher_text = encoder1.encrypt("im_about_to_put_the_hammer_down#rubberduck")
+	print(cipher_text)
 
-decoder1 = LC4_Cipher("xv7ydq#opaj_39rzut8b45wcsgehmiknf26l", "solwbf")
-plain_text = decoder1.decrypt(cipher_text)
-print(plain_text)
+	decoder1 = LC4_Cipher("xv7ydq#opaj_39rzut8b45wcsgehmiknf26l", "solwbf")
+	plain_text = decoder1.decrypt(cipher_text)
+	print(plain_text)
+
+	"""
+	9mlpg_to2yxuzh4387dsajknf56bi#ecwrqv
+	grrhkajlmd3c6xkw65m3dnwl65n9op6k_o59qeq
+	"""
+
+	decoder2 = LC4_Cipher("9mlpg_to2yxuzh4387dsajknf56bi#ecwrqv")
+	plain_text = decoder2.decrypt("grrhkajlmd3c6xkw65m3dnwl65n9op6k_o59qeq")
+	print(plain_text)
