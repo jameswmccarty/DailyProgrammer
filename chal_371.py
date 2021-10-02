@@ -57,6 +57,19 @@ def qcheck(sol):
 			j += 1
 	return True
 
+def qfix(sol):
+	if qcheck(sol):
+		return sol
+	for i in range(len(sol)):
+		for j in range(len(sol)):
+			trial = sol[:]
+			if i != j:
+				t = trial[i]
+				trial[i] = trial[j]
+				trial[j] = t
+			if qcheck(trial):
+				return trial
+
 
 print(qcheck([2, 4, 6, 1, 3, 5]))# => true
 print(qcheck([4, 2, 7, 3, 6, 8, 5, 1]))# => true
@@ -64,4 +77,9 @@ print(qcheck([2, 5, 7, 4, 1, 8, 6, 3]))# => true
 print(qcheck([5, 3, 1, 4, 2, 8, 6, 3]))# => false   (b3 and h3 are on the same row)
 print(qcheck([5, 8, 2, 4, 7, 1, 3, 6]))# => false   (b8 and g3 are on the same diagonal)
 print(qcheck([4, 3, 1, 8, 1, 3, 5, 2]))# => false   (multiple problems)
+
+print(qfix([8, 6, 4, 2, 7, 1, 3, 5]))# => {4, 6, 8, 2, 7, 1, 3, 5}
+print(qfix([8, 5, 1, 3, 6, 2, 7, 4]))# => {8, 4, 1, 3, 6, 2, 7, 5}
+print(qfix([4, 6, 8, 3, 1, 2, 5, 7]))# => {4, 6, 8, 3, 1, 7, 5, 2}
+print(qfix([7, 1, 3, 6, 8, 5, 2, 4]))# => {7, 3, 1, 6, 8, 5, 2, 4}
 
