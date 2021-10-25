@@ -43,56 +43,68 @@ Challenge Input
 		###################### ###########################  ##############
 ##############################################################################
 """
-
-import math
+from collections import deque
+import random
 
 world = []
 water_map = dict()
+water_set = set()
 width = None
 height = None
 move_dirs = []
 for a in [-1,0,1]:
 	for b in [-1,0,1]:
-		if not (a == 0 and b == 0):
-			move_dirs.append((a,b))
+		move_dirs.append((a,b))
+move_dirs.remove((0,0))
 
 with open('nemo_map.txt', 'r') as infile:
 	width, height = infile.readline().split(" ")
 	width = int(width)
 	height = int(height)
-	for i in range(height):
-		line = infile.readline().strip('\n')
+	map_part = infile.read().split('\n')
+	for line in map_part:
 		world.append(line + ' '*(width-len(line)))
 
 for y, line in enumerate(world):
 	for x, char in enumerate(line):
 		if char == ' ':
 			water_map[(x,y)] = None
+			water_set.add((x,y))
+world = []
 
 for entry in water_map.keys():
-	q = [(entry,0)]
-	searching = True
-	seen = set()
-	while len(q) > 0 and searching:
-		coord, d = q.pop(0)
-		x, y = coord
-		seen.add((x,y))
-		if world[y][x] == '#':
-			water_map[entry] = d
-			searching = False
-		if (x,) in water_map and water_map[(x,y)] != None:
-			water_map[entry] = water_map[(x,y)] + 1
-			searching = False
-		else:
+	if water_map[entry] == None:
+		q = deque()
+		q.append(entry)
+		seen = { entry }
+		unroll = dict()
+		while len(q) > 0:
+			coord = q.popleft()
+			x, y = coord
+			if coord not in water_set:
+				q = []
+				last_coord = unroll[coord]
+				step = 1
+				while last_coord != entry:
+					water_map[last_coord] = step
+					last_coord = unroll[last_coord]
+					step += 1
+				water_map[entry] = step
+				break
 			for step in move_dirs:
-				if not (y+step[1] >= height or y+step[1] < 0):
-					next_x, next_y = ((x+step[0])%width,y+step[1])
-					if (next_x,next_y) not in seen:
-						seen.add((next_x, next_y))
-						#x_dist = min([abs(next_x-entry[0]), width-abs(next_x-entry[0])])
-						#y_dist = next_y-entry[1]
-						#d = math.sqrt(x_dist**2+y_dist**2)
-						q.append(((next_x,next_y),d+1))
+				next_x, next_y = ((x+step[0])%width,y+step[1])
+				if (next_x,next_y) not in seen and next_y >= 0 and next_y < height:
+					seen.add((next_x, next_y))
+					q.append((next_x,next_y))
+					unroll[(next_x,next_y)] = coord
+
+#for j in range(height):
+#	for i in range(width):
+#		if (i,j) not in water_map:
+#			print('#',end='')
+#		else:
+#			print(water_map[(i,j)],end='')
+#	print()
 
 distance = max([ _ for _ in water_map.values() ])
 print(distance, [ _ for _ in water_map.keys() if water_map[_] == distance ])
