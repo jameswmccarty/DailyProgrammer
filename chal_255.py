@@ -97,7 +97,7 @@ with open('switches.txt', 'r') as infile:
 print(sum(switches))
 """
 
-
+"""
 with open('switches.txt', 'r') as infile:
 	n = int(infile.readline())
 	ranges = set()
@@ -109,3 +109,28 @@ with open('switches.txt', 'r') as infile:
 		high = max(left,right)
 		ranges = ranges.symmetric_difference({ _ for _ in range(low,high+1) })
 	print(len(ranges))
+"""
+
+xs = []
+with open('lots_of_switches.txt','r') as infile:
+	n = int(infile.readline())
+	rest = infile.read()
+	for line in rest.strip().split('\n'):
+		left, right = line.strip().split(" ")
+		left, right = int(left), int(right)
+		low = min(left,right)
+		high = max(left,right)
+		xs.append(low)
+		xs.append(high+1)
+xs.sort()
+count = 0
+toggle = 1
+for i in range(len(xs)-1):
+	if toggle == 1:
+		count += xs[i+1]-xs[i]
+		toggle = 0
+	else:
+		toggle = 1
+print(count)
+
+
