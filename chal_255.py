@@ -111,6 +111,7 @@ with open('switches.txt', 'r') as infile:
 	print(len(ranges))
 """
 
+"""
 xs = []
 with open('lots_of_switches.txt','r') as infile:
 	n = int(infile.readline())
@@ -131,6 +132,19 @@ for i in range(len(xs)-1):
 		toggle = 0
 	else:
 		toggle = 1
+print(count)
+"""
+
+xs = []
+with open('lots_of_switches.txt','r') as infile:
+	n = int(infile.readline())
+	rest = infile.read()
+	for line in rest.strip().split('\n'):
+		left, right = map(int,line.strip().split(" "))
+		xs.append(min(left,right))
+		xs.append(max(left,right)+1)
+xs.sort()
+count = sum([ xs[i+1]-xs[i] if i%2==0 else 0 for i in range(len(xs)-1) ])
 print(count)
 
 
