@@ -11,6 +11,8 @@ Treat words as nodes (vertices) of a graph, and add edges between nodes that hav
 Search graph for a 5-clique.
 """
 
+from collections import deque
+
 edges = set()
 vertices = list()
 degrees = list()
@@ -23,7 +25,7 @@ def find_k_clique(k):
 	# nodes in a k-clique must have at least degree k-1
 	search_vert = { v for idx,v in enumerate(vertices) if degrees[idx] >= k-1 }
 	# only keep edges between vertices of high enough degree
-	n_edges = [ e for e in edges if e[0] in search_vert and e[1] in search_vert ]
+	n_edges =deque( [ e for e in edges if e[0] in search_vert and e[1] in search_vert ] )
 	for i in range(3,k+1):
 		next_edges = set() # build the 'i' sized clique
 		while len(n_edges) > 0:
@@ -31,8 +33,8 @@ def find_k_clique(k):
 			for v in search_vert:
 				if all( tuple(sorted([v,e[j]])) in edges for j in range(i-1) ):
 					next_edges.add(tuple(sorted(list(e)+[v])))
-		#print("Done with size:",i)
-		n_edges = next_edges
+		print("Done with size:",i)
+		n_edges = deque(next_edges)
 	return n_edges
 
 def normalize(word):
@@ -61,8 +63,8 @@ edges = set()
 for i,w1 in enumerate(anagram_words):
 	vertices.append(i)
 	degree = 0
-	for j in range(i,len(anagram_words)):
-		if len(set(w1+anagram_words[j])) == 10:
+	for j in range(len(anagram_words)):
+		if i != j and len(set(w1+anagram_words[j])) == 10:
 			edges.add(tuple(sorted([i,j])))
 			degree += 1
 	degrees.append(degree)
