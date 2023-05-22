@@ -47,8 +47,12 @@ def sums_to(val,num_list,cap):
 
 # return True if num is a practical number
 def practical(num):
+	if num != 1 and num%2 == 1:
+		return False
+	if num > 2 and not (num%4 == 0 or num%6 == 0):
+		return False
 	factors = factor(num)
-	return True if all( [ sums_to(i,factors,sum(factors)) for i in range(1,num) ] ) else False
+	return all( [ sums_to(i,factors,sum(factors)) for i in range(1,num) ] )
 	
 print(practical(1))
 print(practical(2))
