@@ -34,6 +34,46 @@ https://www.youtube.com/watch?v=IlZOLwf87gM
 def factor(num):
 	return [ i for i in range(1,num//2+1) if num%i == 0 ][::-1]
 
+# return a dictionary of { prime_factor : count }
+def prime_factor(num):
+	factors = dict()
+	i = 2
+	while num > 1:
+		if num%i == 0:
+			if i in factors:
+				factors[i] += 1
+			else:
+				factors[i] = 1
+			num //= i
+		else:
+			i += 1
+	return factors
+
+# return a dictionary of { prime_factor : count } | faster
+def prime_factor2(num):
+	factors = dict()
+	if num % 2 == 0:
+		factors[2] = 0
+	while num % 2 == 0:
+		factors[2] += 1
+		num //= 2
+	i = 3
+	while i * i <= num:
+		if num%i == 0:
+			if i in factors:
+				factors[i] += 1
+			else:
+				factors[i] = 1
+			num //= i
+		else:
+			i += 2
+	if num != 1:
+		if num in factors:
+			factors[num] += 1
+		else:
+			factors[num] = 1
+	return factors
+
 # return True if val can be expressed as a sum of value in provided list num_list
 def sums_to(val,num_list,cap):
 	if val == 0 or val == cap:
@@ -52,16 +92,63 @@ def practical(num):
 	if num > 2 and not (num%4 == 0 or num%6 == 0):
 		return False
 	factors = factor(num)
-	return all( [ sums_to(i,factors,sum(factors)) for i in range(1,num) ] )
-	
+	return all( sums_to(i,factors,sum(factors)) for i in range(1,num) )
+
+# p_n <= 1 + sigma(p_1*p_2*...*p_n-1)
+def sigma_check(p,p_last_sum):
+	total = p_last_sum + 1
+	if p <= total:
+		return True
+	for k in range(p_last_sum//2+1,0,-1):
+		if p_last_sum%k == 0:
+			total += k
+			if p <= total:
+				return True
+	return False
+
+# return True if num is a practical number
+def practical2(num):
+	if num != 1 and num%2 == 1:
+		return False
+	if num > 2 and not (num%4 == 0 or num%6 == 0):
+		return False
+	prime_count = prime_factor2(num)
+	prime_factors = sorted(prime_count.keys())
+	for i in range(1,len(prime_factors)):
+		p_sum = 1
+		for j in range(i):
+			p_sum *= (prime_factors[j] ** prime_count[prime_factors[j]])
+		if not sigma_check(prime_factors[i],p_sum):
+			return False
+	return True
+
 print(practical(1))
 print(practical(2))
 print(practical(3))
 print(practical(10))
 print(practical(12))
+print()
+print(practical2(1))
+print(practical2(2))
+print(practical2(3))
+print(practical2(10))
+print(practical2(12))
+
+#print(prime_factor(100))
+#print(prime_factor(429606))
+#print(prime_factor(10000000000000000000))
+#print(factor(18))
 
 total = 0
 for i in range(1,10001):
-	if practical(i):
+	if practical2(i):
+		total += i
+print(total)
+
+total = 0
+offset = 10000000000000000000
+for i in range(1,10001):
+	#print(i)
+	if practical2(i+offset):
 		total += i
 print(total)
