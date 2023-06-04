@@ -27,8 +27,11 @@ Consider the numbers X in the range 1 to 10,000 inclusive. The sum of all X such
 https://en.wikipedia.org/wiki/Practical_number
 https://www.youtube.com/watch?v=IlZOLwf87gM
 
-
+Bonus (offset=10^19) 1451958
+Bonus (offset=10^20) 1493108
 """
+
+import math
 
 # return a list of a number's divisors (largest first)
 def factor(num):
@@ -95,15 +98,67 @@ def practical(num):
 	return all( sums_to(i,factors,sum(factors)) for i in range(1,num) )
 
 # p_n <= 1 + sigma(p_1*p_2*...*p_n-1)
-def sigma_check(p,p_last_sum):
-	total = p_last_sum + 1
+# don't short circuit, but use memoization 
+hit_map = dict()
+def sigma_check_memo(p,p_last_sum):
+	global hit_map
+	if p_last_sum in hit_map:
+		if p <= hit_map[p_last_sum]:
+			return True
+		else:
+			return False
+	total = 1
+	for k in range(1,int(math.sqrt(p_last_sum)+1)):
+		if p_last_sum%k == 0:
+			if k == (p_last_sum/k):
+				total += k
+			else:
+				total = total + k + (p_last_sum//k)
+	hit_map[p_last_sum] = total
 	if p <= total:
 		return True
-	for k in range(1,p_last_sum//2+1):
+	return False
+
+# p_n <= 1 + sigma(p_1*p_2*...*p_n-1)
+# break as soon as possible
+def sigma_check_short(p,p_last_sum):
+	total = 1
+	for k in range(1,int(math.sqrt(p_last_sum)+1)):
 		if p_last_sum%k == 0:
-			total += k
+			if k == (p_last_sum/k):
+				total += k
+			else:
+				total = total + k + (p_last_sum//k)
 			if p <= total:
 				return True
+	return False
+
+# p_n <= 1 + sigma(p_1*p_2*...*p_n-1)
+# use memoization with short circuiting
+sigma_done = dict() # { num : 1+sum_divisors }
+sigma_prog = dict() # { num : (1+sum_so_far,last_k) }
+def sigma_check(p,p_last_sum):
+	global sigma_done,sigma_prog
+	last_k = 0
+	total  = 1
+	if p_last_sum in sigma_done:
+		if p <= sigma_done[p_last_sum]:
+			return True
+		return False
+	if p_last_sum in sigma_prog:
+		total,last_k = sigma_prog[p_last_sum]
+		if p <= total:
+			return True
+	for k in range(last_k+1,int(math.sqrt(p_last_sum)+1)):
+		if p_last_sum%k == 0:
+			if k == (p_last_sum/k):
+				total += k
+			else:
+				total = total + k + (p_last_sum//k)
+			if p <= total:
+				sigma_prog[p_last_sum] = (total,k)
+				return True
+	sigma_done[p_last_sum] = total
 	return False
 
 # return True if num is a practical number
@@ -203,4 +258,11 @@ for i in range(1,10001):
 print(total)
 
 offset = 10000000000000000000
-print(sum([ i for i in range(1,10001) if practical3(i+offset) ]))
+total = 0
+for i in range(1,10001):
+	#print(i)
+	if practical3(i+offset):
+		total += i
+print(total)
+
+#print(sum([ i for i in range(1,10001) if practical3(i+offset) ]))
